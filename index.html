@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de San Valentín</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Hachi Maru Pop", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #ffe6e6;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        #loading-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: #ffbebe;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            transition: opacity 1s ease-in-out;
+            z-index: 10;
+        }
+        
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+            width: 90%;
+            max-width: 1000px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: scale(0.9);
+            transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+        }
+        #buttons {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        button {
+            background-color: #ffbebe;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: #ffe6e6;
+        }
+        
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+        }
+        
+        .fade-in {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        #game-container.sin-h2 h2 {
+            display: none;
+        }
+
+        #boton-desactivar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            background-color: #ffbebe;
+            cursor: pointer;
+        }
+        #boton-desactivar:hover {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <p>Cargando...</p>
+        <p>¡Todas las decisiones que tomes serán cruciales en el desenlace!<br>Un * marca el final de la historia</p>
+        <p id="info"></p>
+    </div>
+    
+    <div id="game-container" class="fade-out">
+        <h1>Feliz San Valentín</h1>
+        <p id="story">Claudia Sánchez era la princesa más hermosa de todas. Desde que tenía uso de razón, su corazón había suspirado por un único deseo: encontrar a su amado Eric. Aquel anhelo la llevó a embarcarse en una aventura repleta de ...</p>
+        <div id="buttons">
+            <button onclick="chooseOption(1)">Peligros y misterios</button>
+            <button onclick="chooseOption(8)">Aventuras inesperadas</button>
+        </div>
+    </div>
+
+    <div onclick="desactivarSorpresas()" id="boton-desactivar">
+        -
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            let sorpresaVista = localStorage.getItem('sorpresaVista') === 'true'; 
+
+            if (sorpresaVista) {
+                desactivarSorpresas();
+                document.getElementById("info").innerHTML = "Tu sorpresa es: "+localStorage.getItem('sorpresaEs')+"<br>No puedes ver otras sorpresas, pero sí las otras historias.";
+            }
+
+            setTimeout(() => {
+                document.getElementById("loading-screen").style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById("loading-screen").style.display = "none";
+                    document.getElementById("game-container").classList.add('fade-in');
+                    document.getElementById("game-container").style.transform = "scale(1)";
+                }, 1000);
+            }, 3000);
+        });
+
+        function desactivarSorpresas() {
+            let gameContainer = document.getElementById('game-container');
+            gameContainer.classList.add('sin-h2');
+            let botonSorpresa = document.getElementById('boton-desactivar');
+            botonSorpresa.style.display = 'none';
+        }
+
+
+        function chooseOption(option) {
+            
+            let story = document.getElementById('story');
+            let buttons = document.getElementById('buttons');
+            let gameContainer = document.getElementById('game-container');
+            let botonSorpresa = document.getElementById('boton-desactivar');
+            botonSorpresa.style.display = 'none';
+            
+            gameContainer.classList.remove('fade-in');
+            gameContainer.classList.add('fade-out');
+
+            let sorpresaVista = localStorage.getItem('sorpresaVista') === 'true'; 
+            
+            setTimeout(() => {
+                if (option === 1) {
+                    story.innerHTML = "Tras su elección, Claudia se adentró más en el bosque y se encontró cara a cara con una temible serpiente, cuyos ojos brillaban con una intensidad sobrenatural. Sabía que si se enfrentaba a ella, quedaría marcada de por vida, no solo en cuerpo, sino también en alma. La serpiente, con voz gutural, le ofreció una elección: rendirse y regresar a casa o aceptar su desafío y enfrentarse a su destino con valentía.";
+                    buttons.innerHTML = '<button onclick="chooseOption(2)">Regresar</button><button onclick="chooseOption(5)">Aceptar el desafio *</button>';
+                } else if (option === 2) {
+                    story.innerHTML = "Claudia, acobardada por lo sucedido, decidió regresar por el camino que había recorrido. El trayecto fue largo y, al caer la noche, la oscuridad la envolvió. Exhausta, encontró un lugar seguro para acampar entre los árboles, donde el suave murmullo del viento la acompañaba. Aunque su mente seguía inquieta por el encuentro con la serpiente, sabía que necesitaba descansar antes de continuar su aventura al amanecer.";
+                    buttons.innerHTML = '<button onclick="chooseOption(3)">Seguir caminando</button><button onclick="chooseOption(6)">Descansar *</button>';
+                } else if (option === 3) {
+                    story.innerHTML = "Al continuar su camino, Claudia se topó con un edificio extraño, un burdel, oculto entre la espesura del bosque. En la entrada, pudo ver a un hombre de aspecto increíblemente apuesto entrar, su porte imponente y su mirada misteriosa capturaron la atención de la princesa. Un susurro de curiosidad la invadió, preguntándose quién era ese desconocido y qué papel podría jugar en su búsqueda.";
+                    buttons.innerHTML = '<button onclick="chooseOption(4)">Ignorar al hombre</button><button onclick="chooseOption(7)">Pregunar por su habitación *</button>';
+                } else if (option === 4) {
+                    story.innerHTML = "Tras ignorar al hombre, Claudia sintió el peso del cansancio en su cuerpo. Ya no tenía más fuerzas y necesitaba descansar, pero la opción de hacerlo en el burdel no era posible, ya que no tenía dinero. Solo quedaba una opción: darse la vuelta y regresar a las zonas conocidas del bosque, o arriesgarse a preguntar por el apuesto hombre, esperando que pudiera ofrecerle algún tipo de ayuda.";
+                    buttons.innerHTML = '<button onclick="chooseOption(6)">Regresar al lugar seguro *</button><button onclick="chooseOption(7)">Pregunar por su habitación *</button>';
+                } else if (option === 5) {
+                    story.innerHTML = "Mientras Claudia luchaba con la serpiente, un hombre apareció de la nada, empuñando una espada con gran destreza. Su nombre era Eric. Juntos, enfrentaron a la criatura con valentía, pero como era previsible, ambos terminaron siendo mordidos. La serpiente dejó una marca en sus pieles, una cicatriz que, más allá del dolor, los unía de por vida. Aquel encuentro no solo les dejó una huella física, sino también un lazo irrompible entre ellos.";
+                    buttons.innerHTML = '<h2>¡Un tattoo conjuntos! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Un tattoo conjuntos! 💕');
+                    }
+                } else if (option === 6) {
+                    story.innerHTML = "Tras acomodarse en la zona segura, Claudia vio a lo lejos la silueta de un hombre acercándose. Era Eric, un viajero que había perdido su rumbo. Con una sonrisa amable, le preguntó si podía acampar junto a ella bajo las estrellas. Claudia, aceptó su compañía. Esa noche, mientras las estrellas brillaban en el cielo, compartieron historias y risas, creando un recuerdo que los uniría de por vida, un lazo silencioso forjado en la tranquilidad de la oscuridad.";
+                    buttons.innerHTML = '<h2>¡Una noche en un hotel burbuja! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Una noche en un hotel burbuja! 💕');
+                    }
+                } else if (option === 7) {
+                    story.innerHTML = "Tras preguntar por el hombre en la posada, Claudia picó a su puerta. Al abrirle, una fuerte atracción nació al instante entre ellos. Él era Eric, un hombre con una mirada profunda y un porte imponente. Esa noche, sus destinos se entrelazaron de manera inesperada. Juntos, crearon una conexión tan intensa que, entre susurros y risas, hicieron temblar el suelo del burdel, dejando una huella indeleble en ambos.";
+                    buttons.innerHTML = '<h2>¡Una noche en un love hote! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Una noche en un love hote! 💕');
+                    }
+                } else if (option === 8) {
+                    story.innerHTML = "Mientras se adentraba en el prado, Claudia vio a un pintor con su caballete, concentrado en capturar la belleza del paisaje. El sol bañaba el campo en dorados y verdes, mientras él trazaba líneas con destreza. Al notar su presencia, el pintor levantó la vista y, con una sonrisa, le ofreció algo inusual: ¿Te gustaría ser mi musa? Creo que tu presencia haría que el cuadro fuera aún más hermoso.";
+                    buttons.innerHTML = '<button onclick="chooseOption(9)">Rechazar su oferta</button><button onclick="chooseOption(11)">Aceptar *</button>';
+                } else if (option === 9) {
+                    story.innerHTML = "Tras rechazar su oferta, Claudia siguió caminando y, al poco tiempo, se encontró frente a una extraña edificación. A lo lejos, distinguió lo que parecía ser un castillo abandonado. Sus muros, desgastados por el tiempo, parecían susurrar secretos olvidados. Al acercarse a la entrada, vio una inscripción en la puerta: 'Un_ v_z d_n__o, j__ás co_seg_i_ás s___r'. Las letras estaban desgastadas y borrosas, y aunque intentó leerlas con más detalle, el mensaje permanecía confuso, como si las palabras se desvanecieran en el aire.";
+                    buttons.innerHTML = '<button onclick="chooseOption(10)">Alejarse</button><button onclick="chooseOption(12)">Entrar *</button>';
+                } else if (option === 10) {
+                    story.innerHTML = "Justo al lado, Claudia vio una posada muy conocida por sus comidas alucinantes. El aroma a especias y pan recién horneado flotaba en el aire, pero algo la hizo detenerse. Al mirar atrás, el castillo había desaparecido sin dejar rastro, como si nunca hubiera estado allí. Justo entonces, notó que el pintor estaba nuevamente cerca, junto a la posada, observándola con una leve sonrisa. Como si nada hubiera ocurrido, volvió a ofrecerle lo mismo. ¿Segura de que no quieres ser mi musa?";
+                    buttons.innerHTML = '<button onclick="chooseOption(13)">Ignorarlo y entrar a comer *</button><button onclick="chooseOption(11)">Aceptar *</button>';
+                } else if (option === 11) {
+                    story.innerHTML = "Mientras el pintor la dibujaba, apareció un hombre apuesto llamado Eric, cuya presencia iluminó el ambiente con un aire misterioso. Observó la escena con curiosidad y, sonriendo, el pintor le ofreció posar junto a Claudia. Sin dudarlo, ella aceptó, sintiendo que algo en el aire había cambiado. Cuando el dibujo estuvo terminado, ambos contemplaron la obra. Al cruzar sus miradas, una chispa de atracción mutua surgió de manera inesperada. El momento quedó grabado en el lienzo, un recuerdo inmortalizado para siempre.";
+                    buttons.innerHTML = '<h2>¡Sesion de fotos juntos! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Sesion de fotos juntos!');
+                    }
+                } else if (option === 12) {
+                    story.innerHTML = "Al entrar al castillo, todo parecía un enigma, con pasillos oscuros y puertas que susurraban secretos olvidados. En el interior, Claudia descubrió a un hombre llamado Eric, que llevaba un tiempo atrapado allí, como si el castillo mismo hubiera sellado su destino. Juntos, desentrañaron los misterios del lugar, resolviendo acertijos y superando trampas. Al final, lograron escapar, y mientras huían por la puerta que se cerraba tras ellos, algo profundo los unió: un vínculo forjado en la adversidad, marcado para siempre.";
+                    buttons.innerHTML = '<h2>¡Escpa room o actividad! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Escpa room o actividad! 💕');
+                    }
+                } else if (option === 13) {
+                    story.innerHTML = "Claudia entró al restaurante muy hambrienta, esperando saciar su apetito tras el largo día. Por desgracia, solo quedaba un sitio libre y, para su sorpresa, debía compartir mesa. A regañadientes aceptó y se sentó junto a un hombre llamado Eric. A medida que conversaban y compartían platos deliciosos, las risas y las historias comenzaron a fluir entre ellos. Con cada palabra y mirada, algo especial creció en el aire. Al final de la comida, ya no era solo el hambre lo que los unía, sino una conexión profunda.";
+                    buttons.innerHTML = '<h2>¡Menú degustación! 💕</h2>';
+                    localStorage.setItem('sorpresaVista', true);
+                    if (!sorpresaVista) {
+                        localStorage.setItem('sorpresaEs', '¡Menú degustación! 💕');
+                    }
+                }
+
+                gameContainer.classList.remove('fade-out');
+                gameContainer.classList.add('fade-in');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
